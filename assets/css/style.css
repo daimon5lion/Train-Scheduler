@@ -1,0 +1,28 @@
+span {
+  margin-left: 15px;
+  line-height: 37px;
+}
+.card {
+  border: 2px solid rgb(165, 164, 164);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.card-body {
+  border: 5px, solid, gray;
+}
+.card-header {
+  background-clip: border-box;
+  background-origin: border-box;
+
+  background-color: rgb(222, 222, 233);
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-top: -10px;
+  margin-bottom: -10px;
+  height: 40px;
+  font-size: 20px;
+}
+#inputbox {
+  margin-top: 10px;
+}
