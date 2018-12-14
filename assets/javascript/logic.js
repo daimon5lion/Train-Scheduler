@@ -8,7 +8,7 @@ var config = {
 firebase.initializeApp(config);
 
 var database = firebase.database();
-var currentTime = moment().format();
+var currentTime = moment().format("LLLL");
 console.log(currentTime);
 
 $("#submit-btn").on("click", function(event) {
@@ -20,12 +20,9 @@ $("#submit-btn").on("click", function(event) {
   var destination = $("#destination-input")
     .val()
     .trim();
-  var firstTrainTime = moment(
-    $("#time-input")
-      .val()
-      .trim(),
-    "HH:mm"
-  ).format("HH:mm");
+  var firstTrainTime = $("#time-input")
+    .val()
+    .trim();
   var frequency = $("#frequency-input")
     .val()
     .trim();
@@ -66,12 +63,27 @@ database.ref().on("child_added", function(childSnapshot) {
   console.log(tFrequency);
 
   var tMath = moment(tTime, "HH:mm");
-  var tDifference = moment().diff(moment(tMath), "minutes");
+  var tDifference = moment().diff(moment(tMath, "minutes"), "minutes");
+  console.log(tMath);
   console.log(tDifference);
 
   var mFrequency = childSnapshot.val().frequency;
 
-  var minutesLeft = Math.abs(tDifference % mFrequency);
+  var minutesPassed = tDifference % mFrequency;
+  console.log(minutesPassed);
+
+  /*
+  var minutesLeft = tFrequency - minutesPassed;
+  console.log(minutesLeft);
+  */
+
+  if (minutesPassed < 0) {
+    var minutesLeft = Math.abs(minutesPassed - 1);
+  } else {
+    var minutesLeft = tFrequency - minutesPassed;
+  }
+  console.log(minutesLeft);
+
   var nextArrival = moment(currentTime)
     .add(minutesLeft, "minutes")
     .format("hh:mm A");
