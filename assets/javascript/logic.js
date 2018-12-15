@@ -7,6 +7,7 @@ var config = {
 };
 firebase.initializeApp(config);
 
+
 var database = firebase.database();
 var currentTime = moment().format("LLLL");
 console.log(currentTime);
@@ -57,64 +58,69 @@ $("#submit-btn").on("click", function(event) {
   $("#frequency-input").val("");
 });
 
-database.ref().on("child_added", function(childSnapshot) {
-  console.log(childSnapshot.val());
+database.ref().on(
+  "child_added",
+  function(childSnapshot) {
+    console.log(childSnapshot.val());
 
+    var tName = childSnapshot.val().trainname;
+    var tDestination = childSnapshot.val().destination;
+    var tTime = childSnapshot.val().firsttraintime;
+    var tFrequency = childSnapshot.val().frequency;
 
-  var tName = childSnapshot.val().trainname;
-  var tDestination = childSnapshot.val().destination;
-  var tTime = childSnapshot.val().firsttraintime;
-  var tFrequency = childSnapshot.val().frequency;
+    console.log(tName);
+    console.log(tDestination);
+    console.log(tTime);
+    console.log(tFrequency);
 
-  console.log(tName);
-  console.log(tDestination);
-  console.log(tTime);
-  console.log(tFrequency);
+    var tMath = moment(tTime, "HH:mm");
+    var tDifference = moment().diff(moment(tMath, "minutes"), "minutes");
+    console.log(tMath);
+    console.log(tDifference);
 
-  var tMath = moment(tTime, "HH:mm");
-  var tDifference = moment().diff(moment(tMath, "minutes"), "minutes");
-  console.log(tMath);
-  console.log(tDifference);
+    var mFrequency = childSnapshot.val().frequency;
 
-  var mFrequency = childSnapshot.val().frequency;
+    var minutesPassed = tDifference % mFrequency;
+    console.log(minutesPassed);
 
-  var minutesPassed = tDifference % mFrequency;
-  console.log(minutesPassed);
-
-  /*
+    /*
   var minutesLeft = tFrequency - minutesPassed;
   console.log(minutesLeft);
   */
 
-  if (minutesPassed < 0) {
-    var minutesLeft = Math.abs(minutesPassed - 1);
-  } else {
-    var minutesLeft = tFrequency - minutesPassed;
+    if (minutesPassed < 0) {
+      var minutesLeft = Math.abs(minutesPassed - 1);
+    } else {
+      var minutesLeft = tFrequency - minutesPassed;
+    }
+    console.log(minutesLeft);
+
+    var nextArrival = moment(currentTime)
+      .add(minutesLeft, "minutes")
+      .format("hh:mm A");
+
+    $("#train-table > tbody").append(
+      "<tr><td>" +
+        tName +
+        "</td><td>" +
+        tDestination +
+        "</td><td>" +
+        tFrequency +
+        "</td><td>" +
+        nextArrival +
+        "</td><td>" +
+        minutesLeft +
+        "</td></tr>"
+    );
+
+    setTimeout(function() {
+      $("#train-table").slideUp(2000);
+      location.reload();
+    }, 60000);
+  },
+  function(errorObject) {
+    console.log("The read failed: " + errorObject.code);
   }
-  console.log(minutesLeft);
+);
 
-  var nextArrival = moment(currentTime)
-    .add(minutesLeft, "minutes")
-    .format("hh:mm A");
-  
-  $("#train-table > tbody").append(
-    "<tr><td>" +
-      tName +
-      "</td><td>" +
-      tDestination +
-      "</td><td>" +
-      tFrequency +
-      "</td><td>" +
-      nextArrival +
-      "</td><td>" +
-      minutesLeft +
-      "</td></tr>"
-  );
 
-  
-
-  setTimeout(function() {
-    $("#train-table").slideUp(2000);
-    location.reload();
-  }, 60000);
-});
