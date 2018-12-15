@@ -26,3 +26,7 @@ span {
 #inputbox {
   margin-top: 10px;
 }
+
+#current-time {
+  color: rgb(5, 0, 0);
+}

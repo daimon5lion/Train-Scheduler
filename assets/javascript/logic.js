@@ -11,6 +11,14 @@ var database = firebase.database();
 var currentTime = moment().format("LLLL");
 console.log(currentTime);
 
+//Displaying current local time
+var myVar = setInterval(myTimer, 1000);
+function myTimer() {
+  var d = new Date();
+  var t = d.toLocaleTimeString();
+  $("#current-time").text("Local Time: " + t);
+}
+
 $("#submit-btn").on("click", function(event) {
   event.preventDefault();
 
@@ -52,6 +60,7 @@ $("#submit-btn").on("click", function(event) {
 database.ref().on("child_added", function(childSnapshot) {
   console.log(childSnapshot.val());
 
+
   var tName = childSnapshot.val().trainname;
   var tDestination = childSnapshot.val().destination;
   var tTime = childSnapshot.val().firsttraintime;
@@ -87,7 +96,7 @@ database.ref().on("child_added", function(childSnapshot) {
   var nextArrival = moment(currentTime)
     .add(minutesLeft, "minutes")
     .format("hh:mm A");
-
+  
   $("#train-table > tbody").append(
     "<tr><td>" +
       tName +
@@ -101,4 +110,11 @@ database.ref().on("child_added", function(childSnapshot) {
       minutesLeft +
       "</td></tr>"
   );
+
+  
+
+  setTimeout(function() {
+    $("#train-table").slideUp(2000);
+    location.reload();
+  }, 60000);
 });
